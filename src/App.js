@@ -1,12 +1,21 @@
 import React from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import { Icon as LIcon } from 'leaflet';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import { Dropdown, Input, Icon } from 'semantic-ui-react';
 import MyTable from './components/table';
+
+import titleImg from './img/reconstruct.png';
+import myIcon from './img/caution_icon.png';
 
 import './App.css';
 import 'leaflet/dist/leaflet.css';
 
 import 'semantic-ui-css/semantic.min.css';
+
+const markerIcon = new LIcon({
+  iconUrl: myIcon,
+  iconSize: [25, 25]
+});
 
 class App extends React.Component {
   constructor(props) {
@@ -47,7 +56,7 @@ class App extends React.Component {
     return (
       <div className='App'>
         <div className='data panel'>
-          <h1>Dope Project Name</h1>
+          <img className='titleImg' src={titleImg} />
           <div>
             <Dropdown
               placeholder='Country'
@@ -89,6 +98,7 @@ class App extends React.Component {
               attribution='<a href="http://jawg.io" title="Tiles Courtesy of Jawg Maps" target="_blank">&copy; <b>Jawg</b>Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url={"https://tile.jawg.io/jawg-streets/{z}/{x}/{y}.png?access-token=" + process.env.REACT_APP_JAWG_TOKEN}
             />
+            <Marker position={[43.47171797361648, -80.54539602479045]} icon={markerIcon} />
           </MapContainer>
         </div>
       </div>

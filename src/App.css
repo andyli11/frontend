@@ -9,6 +9,12 @@
   display: flex;
 }
 
+.titleImg {
+  max-height: 60px;
+  max-width: 80%;
+  margin-bottom: 20px;
+}
+
 .mapButton {
   position: fixed;
   height: 50px;
@@ -48,8 +54,9 @@
 .map.panel {
   position: relative;
   z-index: 1;
+  transition: 0.2s;
 }
-.map.panel.hidden { width: 0; }
+.map.panel.hidden { width: 0; transition: 0.2s; }
 
 .leaflet-container {
   height: 100vh;
