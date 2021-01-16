@@ -1,33 +1,12 @@
 import React from 'react';
-import { Table } from 'semantic-ui-react';
+import { Table, Menu, Icon } from 'semantic-ui-react';
 
 class MyTable extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-      data: [
-        {
-          location: 'King St.',
-          urgency: 10,
-          cost: 2
-        },
-        {
-          location: 'Columbia St.',
-          urgency: 7,
-          cost: 7
-        },
-        {
-          location: 'Ring Rd.',
-          urgency: 9,
-          cost: 11
-        },
-        {
-          location: 'Allen St.',
-          urgency: 3,
-          cost: 3
-        }
-      ],
+      data: this.props.data,
       column: 'N/A',    // Set in componentDidMount.
       direction: 'N/A'  // Set in componentDidMount.
     }
@@ -106,6 +85,24 @@ class MyTable extends React.Component {
             : 'many oopz, there is nothing'
           }
         </Table.Body>
+        <Table.Footer>
+          <Table.Row>
+            <Table.HeaderCell colSpan='3'>
+              <Menu floated='right' pagination>
+                <Menu.Item as='a' icon>
+                  <Icon name='chevron left' />
+                </Menu.Item>
+                <Menu.Item as='a'>1</Menu.Item>
+                <Menu.Item as='a'>2</Menu.Item>
+                <Menu.Item as='a'>3</Menu.Item>
+                <Menu.Item as='a'>4</Menu.Item>
+                <Menu.Item as='a' icon>
+                  <Icon name='chevron right' />
+                </Menu.Item>
+              </Menu>
+            </Table.HeaderCell>
+          </Table.Row>
+        </Table.Footer>
       </Table>
     )
   }

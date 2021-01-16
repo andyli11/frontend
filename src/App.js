@@ -9,6 +9,40 @@ import 'leaflet/dist/leaflet.css';
 import 'semantic-ui-css/semantic.min.css';
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      mapOpen: true,
+      data: [
+        {
+          location: 'King St.',
+          urgency: 10,
+          cost: 2
+        },
+        {
+          location: 'Columbia St.',
+          urgency: 7,
+          cost: 7
+        },
+        {
+          location: 'Ring Rd.',
+          urgency: 9,
+          cost: 11
+        },
+        {
+          location: 'Allen St.',
+          urgency: 3,
+          cost: 3
+        }
+      ]
+    }
+  }
+
+  toggleMap = () => {
+    this.setState({ mapOpen: !this.state.mapOpen });
+  }
+
   render() {
     return (
       <div className='App'>
@@ -36,11 +70,17 @@ class App extends React.Component {
               <input />
             </Input>
           </div>
-          <MyTable />
+          <MyTable data={this.state.data} />
+        <button className='mapButton' onClick={this.toggleMap}>
+          <Icon
+            name={this.state.mapOpen ? 'map' : 'map outline'}
+            style={this.state.mapOpen ? {color: '#2775f2'} : {color: '#7a7a7a'}}
+          />
+        </button>
         </div>
-        <div className='map panel'>
+        <div className={this.state.mapOpen ? 'map panel' : 'map panel hidden'}>
           <MapContainer
-            center={[51.505, -0.09]}
+            center={[43.4643, -80.5204]}
             zoom={13}
             minZoom={10}
             maxZoom={16}
