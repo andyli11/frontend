@@ -4,6 +4,25 @@
   box-sizing: border-box;
 }
 
+.App {
+  height: 100vh;
+  display: flex;
+}
+
+.panel {
+  height: 100vh;
+  width: 50%;
+}
+
+.data.panel {
+  padding: 30px;
+  text-align: center;
+}
+
+.data.panel > div:nth-child(2) > * {
+  margin: 5px;
+}
+
 .leaflet-container {
   height: 100vh;
 }
