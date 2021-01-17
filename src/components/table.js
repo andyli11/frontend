@@ -59,23 +59,24 @@ class MyTable extends React.Component {
   }
 
   render() {
+    let tablePadding = 8;
     return (
       <Table sortable celled fixed>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell
+            <Table.HeaderCell style={{padding: tablePadding}}
               sorted={this.state.column === 'address' ? this.state.direction : null}
               onClick={() => this.sortTable('address')}
             >
               Location
             </Table.HeaderCell>
-            <Table.HeaderCell
+            <Table.HeaderCell style={{padding: tablePadding}}
               sorted={this.state.column === 'urgency' ? this.state.direction : null}
               onClick={() => this.sortTable('urgency')}
             >
               Urgency
             </Table.HeaderCell>
-            <Table.HeaderCell
+            <Table.HeaderCell style={{padding: tablePadding}}
               sorted={this.state.column === 'cost' ? this.state.direction : null}
               onClick={() => this.sortTable('cost')}
             >
@@ -88,11 +89,11 @@ class MyTable extends React.Component {
             this.state.data
             ? this.state.data.map(({ address, urgency, cost, image }) => (
               <Table.Row key={address}>
-                <Table.Cell>
+                <Table.Cell style={{padding: tablePadding}}>
                   <ImageModal address={address} image={image} />
                 </Table.Cell>
-                <Table.Cell>{urgency}</Table.Cell>
-                <Table.Cell>{cost}</Table.Cell>
+                <Table.Cell style={{padding: tablePadding}}>{urgency}</Table.Cell>
+                <Table.Cell style={{padding: tablePadding}}>{cost}</Table.Cell>
               </Table.Row>
             ))
             : 'Whoops! There\'s nothing to show here.'
