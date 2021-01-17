@@ -47,8 +47,6 @@ class App extends React.Component {
     let markers = null;
     if (this.state.data && this.state.data.length > 0){
       markers = this.state.data.map(item => {
-        console.log(item)
-        console.log(item.coordinates._latitude, item.coordinates._longitude)
         return <Marker key={item.id} position={[item.coordinates._latitude, item.coordinates._longitude]} icon={markerIcon} />
       });
     }

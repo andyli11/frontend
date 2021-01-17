@@ -6,6 +6,7 @@ class MyTable extends React.Component {
     super(props);
 
     this.state = {
+      propsData: this.props.data,
       data: this.props.data,
       column: 'N/A',    // Set in componentDidMount.
       direction: 'N/A'  // Set in componentDidMount.
@@ -48,8 +49,11 @@ class MyTable extends React.Component {
   }
 
   componentDidUpdate = () => {
-    if (this.props.data !== this.state.data){
-      this.setState({ data: this.props.data });
+    if (this.props.data !== this.state.propsData){
+      this.setState({
+        propsData: this.props.data,
+        data: this.props.data
+      });
     }
   }
 
