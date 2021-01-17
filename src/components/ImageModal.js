@@ -23,9 +23,13 @@ class ImageModal extends React.Component {
       textAlign: 'left'
     };
 
+    let urgencyColor = (this.props.urgency < 10000) ? 'green' : (this.props.urgency < 20000) ? 'yellow' : 'red';
+
     return (
+      
       <Modal
         closeIcon
+        size='small'
         open={this.state.open}
         trigger={<Image src={`https://reconstruct-backend.herokuapp.com/uploads/${this.props.image}`} />}
         onOpen={() => this.setState({ open: true })}
@@ -33,11 +37,11 @@ class ImageModal extends React.Component {
       >
         <Modal.Header>{this.props.title}</Modal.Header>
         <Modal.Content style={{ display: 'flex', alignItems: 'center' }}>
-          <img style={{width: '50%', maxHeight: '60vh', objectFit: 'cover'}} size='medium' src={`https://reconstruct-backend.herokuapp.com/uploads/${this.props.image}`} />
+          <img style={{width: '50%', maxHeight: '50vh', objectFit: 'cover', borderRadius: 4}} size='medium' src={`https://reconstruct-backend.herokuapp.com/uploads/${this.props.image}`} />
           <Modal.Description style={{ width: '50%', textAlign: 'center' }}>
-            <Statistic label='Urgency Score' value={this.props.urgency.toLocaleString()} />
+            <Statistic size='large' color={urgencyColor} label='Urgency Score' value={this.props.urgency.toLocaleString()} />
             <br />
-            <Statistic label='Estimated Cost' value={'$' + this.props.cost.toLocaleString()} />
+            <Statistic color='grey' label='Estimated Cost' value={'$' + this.props.cost.toLocaleString()} />
           </Modal.Description>
         </Modal.Content>
       </Modal>

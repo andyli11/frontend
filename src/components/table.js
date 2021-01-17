@@ -75,7 +75,7 @@ class MyTable extends React.Component {
 
   render() {
     return (
-      <Table sortable celled fixed style={{height: '10px'}}>
+      <Table sortable celled fixed color='yellow'>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell

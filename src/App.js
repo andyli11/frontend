@@ -110,7 +110,6 @@ class App extends React.Component {
               placeholder='Country'
               search
               selection
-              disabled
               value={'ca'}
               options={[{ key: 'ca', value: 'ca', flag: 'ca', text: 'Canada' }]}
             />
@@ -118,7 +117,6 @@ class App extends React.Component {
               placeholder='City'
               search
               selection
-              disabled
               value={'waterloo'}
               options={[{ key: 'waterloo', value: 'waterloo', text: 'Waterloo' }]}
             />
@@ -135,7 +133,7 @@ class App extends React.Component {
               <Icon name='dollar sign' />
               <input value={this.state.budget} onChange={this.handleBudgetInputChange} />
             </Input>
-            <Button type='submit'>Calculate</Button>
+            <Button type='submit' color='yellow'>Calculate</Button>
           </form>
 
           <button className='mapButton' onClick={this.toggleMap}>
