@@ -53,8 +53,6 @@ class MyTable extends React.Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-
-    console.log('this.state.data:', this.state.data)
     if (this.props.data !== prevProps.data) {
       this.setState({
         data: this.props.data,
@@ -67,22 +65,22 @@ class MyTable extends React.Component {
   render() {
     let tablePadding = 8;
     return (
-      <Table sortable celled fixed>
+      <Table sortable celled fixed style={{height: '10px'}}>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell style={{padding: tablePadding}}
+            <Table.HeaderCell
               sorted={this.state.column === 'address' ? this.state.direction : null}
               onClick={() => this.sortTable('address')}
             >
               Location
             </Table.HeaderCell>
-            <Table.HeaderCell style={{padding: tablePadding}}
+            <Table.HeaderCell
               sorted={this.state.column === 'urgency' ? this.state.direction : null}
               onClick={() => this.sortTable('urgency')}
             >
               Urgency
             </Table.HeaderCell>
-            <Table.HeaderCell style={{padding: tablePadding}}
+            <Table.HeaderCell
               sorted={this.state.column === 'cost' ? this.state.direction : null}
               onClick={() => this.sortTable('cost')}
             >
@@ -95,13 +93,13 @@ class MyTable extends React.Component {
             this.state.data
             ? this.state.data
                 .slice((this.state.page - 1) * ELEMENTS_PER_PAGE, this.state.page * ELEMENTS_PER_PAGE)
-                .map(({ id, address, urgency, cost, image }) => (
-                  <Table.Row key={id}>
-                    <Table.Cell style={{padding: tablePadding}}>
-                      <ImageModal address={address} image={image} />
+                .map(site => (
+                  <Table.Row className='site-table-row' key={site.id} onClick={this.props.selectSiteFunc ? () => this.props.selectSiteFunc(site) : null}>
+                    <Table.Cell>
+                      {site.address}
                     </Table.Cell>
-                    <Table.Cell style={{padding: tablePadding}}>{urgency}</Table.Cell>
-                    <Table.Cell style={{padding: tablePadding}}>{cost}</Table.Cell>
+                    <Table.Cell>{site.urgency}</Table.Cell>
+                    <Table.Cell>{site.cost}</Table.Cell>
                   </Table.Row>
                 ))
             : 'Whoops! There\'s nothing to show here.'

@@ -25,15 +25,21 @@ class ImageModal extends React.Component {
 
     return (
       <Modal
-        basic
         closeIcon
-        size='tiny'
         open={this.state.open}
-        trigger={<button style={triggerButtonStyle}>{this.props.address}</button>}
+        trigger={<Image src={`https://reconstruct-backend.herokuapp.com/uploads/${this.props.image}`} />}
         onOpen={() => this.setState({ open: true })}
         onClose={() => this.setState({ open: false })}
       >
-        <Image style={{margin: '0 auto'}} size='medium' src={`https://reconstruct-backend.herokuapp.com/uploads/${this.props.image}`} />
+        <Modal.Header>{this.props.title}</Modal.Header>
+        <Modal.Content image>
+        <Image size='medium' src={`https://reconstruct-backend.herokuapp.com/uploads/${this.props.image}`} wrapped />
+          <Modal.Description>
+            <strong>Urgency Score:</strong> {this.props.urgency}
+
+            <strong>Estimated Cost:</strong> ${this.props.cost}
+          </Modal.Description>
+        </Modal.Content>
       </Modal>
     );
 

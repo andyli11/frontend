@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon as LIcon } from 'leaflet';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import axios from 'axios';
 import { Dropdown, Input, Icon, Button, Modal } from 'semantic-ui-react';
 import MyTable from './components/table';
@@ -12,6 +12,7 @@ import './App.css';
 import 'leaflet/dist/leaflet.css';
 
 import 'semantic-ui-css/semantic.min.css';
+import ImageModal from './components/ImageModal';
 
 const markerIcon = new LIcon({
   iconUrl: myIcon,
@@ -27,12 +28,17 @@ class App extends React.Component {
       data: [],
       budget: null,
       budgetModalOpen: false,
-      optimizedPlan: []
+      optimizedPlan: [],
+      selectedSite: null
     }
   }
 
   toggleMap = () => {
     this.setState({ mapOpen: !this.state.mapOpen });
+  }
+
+  selectSite = (site) => {
+    this.setState({ selectedSite: site });
   }
 
   handleBudgetInputChange = ev => {
@@ -46,7 +52,7 @@ class App extends React.Component {
   handleBudgetSubmit = ev => {
     ev.preventDefault();
 
-    if (this.state.budget){
+    if (this.state.budget && this.state.budget >= 0){
       axios.get('https://reconstruct-backend.herokuapp.com/site/optimize?budget=' + this.state.budget)
         .then(result => {
           if (result.data.result && result.data.result.length !== 0){
@@ -81,7 +87,14 @@ class App extends React.Component {
     let markers = null;
     if (this.state.data && this.state.data.length > 0){
       markers = this.state.data.map(item => {
-        return <Marker key={item.id} position={[item.coordinates._latitude, item.coordinates._longitude]} icon={markerIcon} />
+        return(
+          <Marker
+            key={item.id}
+            position={[item.coordinates._latitude, item.coordinates._longitude]}
+            icon={markerIcon}
+            onClick={() => console.log('ellso')}
+          />
+        )
       });
     }
     return (
@@ -107,7 +120,7 @@ class App extends React.Component {
             />
           </div>
 
-          <MyTable data={this.state.data} />
+          <MyTable data={this.state.data} selectSiteFunc={this.selectSite} />
 
           <form onSubmit={this.handleBudgetSubmit}>
             <Input iconPosition='left' placeholder='Budget'>
@@ -136,6 +149,21 @@ class App extends React.Component {
               url={"https://tile.jawg.io/jawg-streets/{z}/{x}/{y}.png?access-token=" + process.env.REACT_APP_JAWG_TOKEN}
             />
             { markers }
+            {
+              this.state.selectedSite
+                ? <Popup
+                    position={[this.state.selectedSite.coordinates._latitude, this.state.selectedSite.coordinates._longitude]}
+                    onClose={() => this.setState({ selectedSite: null })}
+                  >
+                    <ImageModal
+                      title={this.state.selectedSite.address}
+                      image={this.state.selectedSite.image}
+                      urgency={this.state.selectedSite.urgency}
+                      cost={this.state.selectedSite.cost}
+                    />
+                  </Popup>
+                : null
+            }
           </MapContainer>
         </div>
 
