@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon as LIcon } from 'leaflet';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import axios from 'axios';
 import { Dropdown, Input, Icon } from 'semantic-ui-react';
 import MyTable from './components/table';
 
@@ -23,40 +24,65 @@ class App extends React.Component {
     
     this.state = {
       mapOpen: true,
-      data: [
-        {
-          location: 'King St.',
-          urgency: 10,
-          cost: 2
-        },
-        {
-          location: 'Columbia St.',
-          urgency: 7,
-          cost: 7
-        },
-        {
-          location: 'Ring Rd.',
-          urgency: 9,
-          cost: 11
-        },
-        {
-          location: 'Allen St.',
-          urgency: 3,
-          cost: 3
-        }
-      ]
+      data: []
     }
+
+    this.yeet = [
+      {
+        address: 'King St.',
+        coordinates: [43.17171797361648, -80.44539602479045],
+        urgency: 10,
+        cost: 2
+      },
+      {
+        address: 'Columbia St.',
+        coordinates: [43.37171797361648, -80.59539602479045],
+        urgency: 7,
+        cost: 7
+      },
+      {
+        address: 'Ring Rd.',
+        coordinates: [43.47171797361648, -80.54539602479045],
+        urgency: 9,
+        cost: 11
+      },
+      {
+        address: 'Allen St.',
+        coordinates: [43.7171797361648, -80.51539602479045],
+        urgency: 3,
+        cost: 3
+      }
+    ]
   }
 
   toggleMap = () => {
     this.setState({ mapOpen: !this.state.mapOpen });
   }
 
+  componentDidMount = () => {
+    console.log('mounted')
+    axios.get('https://reconstruct-backend.herokuapp.com/site/get')
+      .then(result => {
+        this.setState({ data: result.data.result });
+      })
+      .catch(err => {
+        console.log('error', err);
+      });
+  }
+
   render() {
+    let markers = null;
+    if (this.state.data && this.state.data.length > 0){
+      markers = this.state.data.map(item => {
+        console.log(item)
+        console.log(item.coordinates._latitude, item.coordinates._longitude)
+        return <Marker key={item.id} position={[item.coordinates._latitude, item.coordinates._longitude]} icon={markerIcon} />
+      });
+    }
     return (
       <div className='App'>
         <div className='data panel'>
-          <img className='titleImg' src={titleImg} />
+          <img className='titleImg' src={titleImg} alt='title' />
           <div>
             <Dropdown
               placeholder='Country'
@@ -92,13 +118,13 @@ class App extends React.Component {
             center={[43.4643, -80.5204]}
             zoom={13}
             minZoom={10}
-            maxZoom={16}
+            //maxZoom={16}
           >
             <TileLayer
               attribution='<a href="http://jawg.io" title="Tiles Courtesy of Jawg Maps" target="_blank">&copy; <b>Jawg</b>Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url={"https://tile.jawg.io/jawg-streets/{z}/{x}/{y}.png?access-token=" + process.env.REACT_APP_JAWG_TOKEN}
             />
-            <Marker position={[43.47171797361648, -80.54539602479045]} icon={markerIcon} />
+            { markers }
           </MapContainer>
         </div>
       </div>

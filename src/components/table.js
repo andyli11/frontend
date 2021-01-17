@@ -44,7 +44,7 @@ class MyTable extends React.Component {
   }
 
   componentDidMount = () => {
-    this.sortTable('location');
+    this.sortTable('address');
   }
 
   render() {
@@ -53,8 +53,8 @@ class MyTable extends React.Component {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
-              sorted={this.state.column === 'location' ? this.state.direction : null}
-              onClick={() => this.sortTable('location')}
+              sorted={this.state.column === 'address' ? this.state.direction : null}
+              onClick={() => this.sortTable('address')}
             >
               Location
             </Table.HeaderCell>
@@ -75,14 +75,14 @@ class MyTable extends React.Component {
         <Table.Body>
           {
             this.state.data
-            ? this.state.data.map(({ location, urgency, cost }) => (
-              <Table.Row key={location}>
-                <Table.Cell>{location}</Table.Cell>
+            ? this.state.data.map(({ address, urgency, cost }) => (
+              <Table.Row key={address}>
+                <Table.Cell>{address}</Table.Cell>
                 <Table.Cell>{urgency}</Table.Cell>
                 <Table.Cell>{cost}</Table.Cell>
               </Table.Row>
             ))
-            : 'many oopz, there is nothing'
+            : 'Whoops! There\'s nothing to show here.'
           }
         </Table.Body>
         <Table.Footer>
