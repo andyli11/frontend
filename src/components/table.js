@@ -47,6 +47,12 @@ class MyTable extends React.Component {
     this.sortTable('address');
   }
 
+  componentDidUpdate = () => {
+    if (this.props.data !== this.state.data){
+      this.setState({ data: this.props.data });
+    }
+  }
+
   render() {
     return (
       <Table sortable celled fixed>

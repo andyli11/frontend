@@ -26,33 +26,6 @@ class App extends React.Component {
       mapOpen: true,
       data: []
     }
-
-    this.yeet = [
-      {
-        address: 'King St.',
-        coordinates: [43.17171797361648, -80.44539602479045],
-        urgency: 10,
-        cost: 2
-      },
-      {
-        address: 'Columbia St.',
-        coordinates: [43.37171797361648, -80.59539602479045],
-        urgency: 7,
-        cost: 7
-      },
-      {
-        address: 'Ring Rd.',
-        coordinates: [43.47171797361648, -80.54539602479045],
-        urgency: 9,
-        cost: 11
-      },
-      {
-        address: 'Allen St.',
-        coordinates: [43.7171797361648, -80.51539602479045],
-        urgency: 3,
-        cost: 3
-      }
-    ]
   }
 
   toggleMap = () => {
