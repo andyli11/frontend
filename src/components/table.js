@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, Menu, Icon } from 'semantic-ui-react';
+import ImageModal from './ImageModal';
 
 class MyTable extends React.Component {
   constructor(props){
@@ -85,9 +86,11 @@ class MyTable extends React.Component {
         <Table.Body>
           {
             this.state.data
-            ? this.state.data.map(({ address, urgency, cost }) => (
+            ? this.state.data.map(({ address, urgency, cost, image }) => (
               <Table.Row key={address}>
-                <Table.Cell>{address}</Table.Cell>
+                <Table.Cell>
+                  <ImageModal address={address} image={image} />
+                </Table.Cell>
                 <Table.Cell>{urgency}</Table.Cell>
                 <Table.Cell>{cost}</Table.Cell>
               </Table.Row>
