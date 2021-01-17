@@ -24,11 +24,12 @@ const markerIcon = new LIcon({
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    this.budgetInputRef = React.createRef();
     
     this.state = {
       mapOpen: true,
       data: [],
-      budget: '',
       budgetModalOpen: false,
       loading: false,
       optimizedPlan: [],
@@ -39,6 +40,8 @@ class App extends React.Component {
       }
     }
   }
+
+  budgetValue = 0;
 
   newToast = (title, content, type) => {
     let toastsListCopy = this.state.toasts.list.slice();
@@ -86,18 +89,16 @@ class App extends React.Component {
 
   handleBudgetInputChange = ev => {
     if (!isNaN(ev.target.value) && ev.target.value < 1000000000000) {
-      this.setState({
-        budget: ev.target.value
-      });
+      this.budgetValue = ev.target.value;
     }
   }
 
   handleBudgetSubmit = ev => {
     ev.preventDefault();
 
-    if (this.state.budget && this.state.budget > 0){
+    if (this.budgetValue && this.budgetValue > 0){
       this.setState({ loading: true });
-      axios.get('https://reconstruct-backend.herokuapp.com/site/optimize?budget=' + this.state.budget)
+      axios.get('https://reconstruct-backend.herokuapp.com/site/optimize?budget=' + this.budgetValue)
         .then(result => {
           setTimeout(() => {
             if (result.data.result && result.data.result.length !== 0){
@@ -151,7 +152,7 @@ class App extends React.Component {
             position={[item.coordinates._latitude, item.coordinates._longitude]}
             icon={markerIcon}
             eventHandlers={{
-              click: (e) => this.selectSite(item),
+              click: (e) => this.selectSite(item)
             }}
           />
         )
@@ -189,6 +190,7 @@ class App extends React.Component {
 
           <form onSubmit={this.handleBudgetSubmit}>
             <Input
+              ref={this.budgetInputRef}
               icon='dollar sign'
               iconPosition='left'
               placeholder='Budget'
@@ -200,7 +202,6 @@ class App extends React.Component {
                   </Button.Content>
                 </Button>
               }
-              value={this.state.budget}
               onChange={this.handleBudgetInputChange}
             />
           </form>
@@ -208,7 +209,6 @@ class App extends React.Component {
           <button className='mapButton' onClick={this.toggleMap}>
             <Icon
               name={this.state.mapOpen ? 'map' : 'map outline'}
-              //style={this.state.mapOpen ? {color: '#2775f2'} : {color: '#7a7a7a'}}
               color={this.state.mapOpen ? 'yellow' : 'grey'}
             />
           </button>
@@ -247,6 +247,7 @@ class App extends React.Component {
           open={this.state.budgetModalOpen}
           onClose={this.closeBudgetModal}
           data={this.state.optimizedPlan}
+          budget={this.budgetValue}
         />
 
         <Toasts toasts={this.state.toasts.list} />

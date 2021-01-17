@@ -19,12 +19,16 @@ class MarkerPopup extends React.Component {
     this.setState({ open: false });
   }
 
+  onClose = () => {
+    this.props.setSiteFunc();
+  }
+
   render () {
 
     return (
       <Popup
         position={[this.props.lat, this.props.lon]}
-        onClose={this.props.selectedSiteFunc}
+        onClose={this.onClose}
       >
         <Image
           src={`https://reconstruct-backend.herokuapp.com/uploads/${this.props.image}`}

@@ -21,7 +21,7 @@ class RepairPopup extends React.Component {
           open
           onClose={this.props.onClose}
         >
-          <Modal.Header>Optimized Repair Plan</Modal.Header>
+          <Modal.Header>Optimized Repair Plan (${this.props.budget.toLocaleString()})</Modal.Header>
           <Modal.Content>
             <Modal.Description>
               <MyTable data={this.props.data} />
