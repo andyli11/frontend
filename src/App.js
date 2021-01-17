@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon as LIcon } from 'leaflet';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import axios from 'axios';
-import { Dropdown, Input, Icon } from 'semantic-ui-react';
+import { Dropdown, Input, Icon, Button, Modal } from 'semantic-ui-react';
 import MyTable from './components/table';
 
 import titleImg from './img/reconstruct.png';
@@ -24,7 +24,10 @@ class App extends React.Component {
     
     this.state = {
       mapOpen: true,
-      data: []
+      data: [],
+      budget: null,
+      budgetModalOpen: false,
+      optimizedPlan: []
     }
   }
 
@@ -32,8 +35,39 @@ class App extends React.Component {
     this.setState({ mapOpen: !this.state.mapOpen });
   }
 
+  handleBudgetInputChange = ev => {
+    if (!isNaN(ev.target.value) && ev.target.value < 1000000000000){
+      this.setState({
+        budget: ev.target.value
+      });
+    }
+  }
+
+  handleBudgetSubmit = ev => {
+    ev.preventDefault();
+
+    if (this.state.budget){
+      axios.get('https://reconstruct-backend.herokuapp.com/site/optimize?budget=' + this.state.budget)
+        .then(result => {
+          if (result.data.result && result.data.result.length !== 0){
+            this.setState({
+              optimizedPlan: result.data.result[0].list,
+              budgetModalOpen: true
+            });
+          }
+          else {
+            console.log('oh no.')
+          }
+        })
+        .catch(err => {
+          console.log('Error fetching optimization', err)
+        });
+    }
+  }
+
+  closeBudgetModal = () => { this.setState({ budgetModalOpen: false }) }
+
   componentDidMount = () => {
-    console.log('mounted')
     axios.get('https://reconstruct-backend.herokuapp.com/site/get')
       .then(result => {
         this.setState({ data: result.data.result });
@@ -71,25 +105,31 @@ class App extends React.Component {
               value={'waterloo'}
               options={[{ key: 'waterloo', value: 'waterloo', text: 'Waterloo' }]}
             />
+          </div>
+
+          <MyTable data={this.state.data} />
+
+          <form onSubmit={this.handleBudgetSubmit}>
             <Input iconPosition='left' placeholder='Budget'>
               <Icon name='dollar sign' />
-              <input />
+              <input value={this.state.budget} onChange={this.handleBudgetInputChange} />
             </Input>
-          </div>
-          <MyTable data={this.state.data} />
-        <button className='mapButton' onClick={this.toggleMap}>
-          <Icon
-            name={this.state.mapOpen ? 'map' : 'map outline'}
-            style={this.state.mapOpen ? {color: '#2775f2'} : {color: '#7a7a7a'}}
-          />
-        </button>
+            <Button type='submit'>Calculate</Button>
+          </form>
+
+          <button className='mapButton' onClick={this.toggleMap}>
+            <Icon
+              name={this.state.mapOpen ? 'map' : 'map outline'}
+              style={this.state.mapOpen ? {color: '#2775f2'} : {color: '#7a7a7a'}}
+            />
+          </button>
         </div>
         <div className={this.state.mapOpen ? 'map panel' : 'map panel hidden'}>
           <MapContainer
             center={[43.4643, -80.5204]}
             zoom={13}
             minZoom={10}
-            //maxZoom={16}
+            maxZoom={16}
           >
             <TileLayer
               attribution='<a href="http://jawg.io" title="Tiles Courtesy of Jawg Maps" target="_blank">&copy; <b>Jawg</b>Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -98,6 +138,19 @@ class App extends React.Component {
             { markers }
           </MapContainer>
         </div>
+
+        <Modal
+          closeIcon
+          open={this.state.budgetModalOpen}
+          onClose={this.closeBudgetModal}
+        >
+          <Modal.Header>Optimized Repair Plan</Modal.Header>
+          <Modal.Content>
+            <Modal.Description>
+              <MyTable data={this.state.optimizedPlan} />
+            </Modal.Description>
+          </Modal.Content>
+        </Modal>
       </div>
     );
   }
