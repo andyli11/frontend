@@ -10,9 +10,21 @@
 }
 
 .titleImg {
-  max-height: 6vh;
+  height: 4.5vw;
+  max-height: 10vh;
   max-width: 90%;
-  margin-bottom: 20px;
+  margin-bottom: 7%;
+  animation: fade-in 1.5s;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .mapButton {
@@ -31,12 +43,15 @@
 
   z-index: 2;
 }
+
 .mapButton:hover {
   cursor: pointer;
   background-color: #e9e9e9;
 }
 
-.mapButton .icon { margin: 0; }
+.mapButton .icon {
+  margin: 0;
+}
 
 .panel {
   height: 100vh;
@@ -48,7 +63,8 @@
   text-align: center;
   flex-grow: 1;
 }
-.data.panel > div:nth-child(2) > * {
+
+.data.panel>div:nth-child(2)>* {
   margin: 5px;
 }
 
@@ -61,7 +77,11 @@ form button {
   z-index: 1;
   transition: 0.2s;
 }
-.map.panel.hidden { width: 0; transition: 0.2s; }
+
+.map.panel.hidden {
+  width: 0;
+  transition: 0.2s;
+}
 
 .leaflet-container {
   height: 100vh;
