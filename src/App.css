@@ -38,7 +38,7 @@
   box-shadow: 0 0 10px 1px #ababab;
   outline: none;
 
-  transition: all 0.2s;
+  transition: all 0.15s;
 
   z-index: 2;
 }
@@ -68,19 +68,15 @@
   margin: 5px;
 }
 
-form button {
-  margin-left: 10px !important;
-}
-
 .map.panel {
   position: relative;
   z-index: 1;
-  transition: 0.2s;
+  transition: 0.4s;
 }
 
 .map.panel.hidden {
   width: 0;
-  transition: 0.2s;
+  transition: 0.4s;
 }
 
 .leaflet-container {

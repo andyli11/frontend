@@ -2,8 +2,9 @@ import React from 'react';
 import { Icon as LIcon } from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import axios from 'axios';
-import { Dropdown, Input, Icon, Button, Modal } from 'semantic-ui-react';
+import { Dropdown, Input, Icon, Button, Modal, Header, Transition } from 'semantic-ui-react';
 import MyTable from './components/table';
+import MarkerPopup from './components/MarkerPopup';
 
 import titleImg from './img/reconstruct.png';
 import myIcon from './img/caution_icon.png';
@@ -13,6 +14,7 @@ import 'leaflet/dist/leaflet.css';
 
 import 'semantic-ui-css/semantic.min.css';
 import ImageModal from './components/ImageModal';
+import Toasts from './components/Toasts';
 
 const markerIcon = new LIcon({
   iconUrl: myIcon,
@@ -30,9 +32,47 @@ class App extends React.Component {
       budgetModalOpen: false,
       optimizedPlan: [],
       selectedSite: null,
-      pageForce: 0,
-      pageForceFlag: 0
+      toasts: {
+        count: 0,
+        list: []
+      }
     }
+  }
+
+  newToast = (title, content, type) => {
+    let toastsListCopy = this.state.toasts.list.slice();
+    let c = this.state.toasts.count;
+    toastsListCopy.push({
+      id: c,
+      title: title,
+      content: content,
+      type: type
+    });
+
+    this.setState({ toasts: {
+      count: c + 1,
+      list:toastsListCopy
+    }})
+
+    // setTimeout(() => {
+    //   this.removeToast(c);
+    // }, 2500);
+  }
+
+  removeToast = (id) => {
+    let toastsListCopy = this.state.toasts.list.slice();
+    for (let i = 0; i < this.state.toasts.list.length; i++){
+      if (toastsListCopy[i].id === id){
+        toastsListCopy.splice(i, 1);
+      }
+    }
+
+    this.setState({
+      toasts: {
+        count: this.state.toasts.count,
+        list: toastsListCopy
+      }
+    })
   }
 
   toggleMap = () => {
@@ -44,7 +84,7 @@ class App extends React.Component {
   }
 
   handleBudgetInputChange = ev => {
-    if (!isNaN(ev.target.value) && ev.target.value < 1000000000000){
+    if (!isNaN(ev.target.value) && ev.target.value < 1000000000000) {
       this.setState({
         budget: ev.target.value
       });
@@ -65,11 +105,16 @@ class App extends React.Component {
           }
           else {
             console.log('oh no.')
+            this.newToast('Whoops!', 'No optimization could be found for this budget.', 'warning');
           }
         })
         .catch(err => {
           console.log('Error fetching optimization', err)
+          this.newToast('Error', 'There was a problem getting the optimization.', 'danger');
         });
+    }
+    else {
+      this.newToast(null, 'Please enter a positive number for the budget.', 'warning');
     }
   }
 
@@ -82,6 +127,7 @@ class App extends React.Component {
       })
       .catch(err => {
         console.log('error', err);
+        this.newToast('Error', 'There was a problem fetching the data.', 'danger');
       });
   }
 
@@ -128,18 +174,31 @@ class App extends React.Component {
             selectSiteFunc={this.selectSite}
           />
 
+          <Header as='h3'>Optimize Spending</Header>
+
           <form onSubmit={this.handleBudgetSubmit}>
-            <Input iconPosition='left' placeholder='Budget'>
-              <Icon name='dollar sign' />
-              <input value={this.state.budget} onChange={this.handleBudgetInputChange} />
-            </Input>
-            <Button type='submit' color='yellow'>Calculate</Button>
+            <Input
+              icon='dollar sign'
+              iconPosition='left'
+              placeholder='Budget'
+              action={
+                <Button tyle='submit' animated='vertical' color='yellow'>
+                  <Button.Content hidden>Optimize</Button.Content>
+                  <Button.Content visible>
+                    <Icon name='chart line' style={{ margin: '0 1em' }} />
+                  </Button.Content>
+                </Button>
+              }
+              value={this.state.budget}
+              onChange={this.handleBudgetInputChange}
+            />
           </form>
 
           <button className='mapButton' onClick={this.toggleMap}>
             <Icon
               name={this.state.mapOpen ? 'map' : 'map outline'}
-              style={this.state.mapOpen ? {color: '#2775f2'} : {color: '#7a7a7a'}}
+              //style={this.state.mapOpen ? {color: '#2775f2'} : {color: '#7a7a7a'}}
+              color={this.state.mapOpen ? 'yellow' : 'grey'}
             />
           </button>
         </div>
@@ -157,34 +216,37 @@ class App extends React.Component {
             { markers }
             {
               this.state.selectedSite
-                ? <Popup
-                    position={[this.state.selectedSite.coordinates._latitude, this.state.selectedSite.coordinates._longitude]}
-                    onClose={() => this.setState({ selectedSite: null })}
-                  >
-                    <ImageModal
-                      title={this.state.selectedSite.address}
-                      image={this.state.selectedSite.image}
-                      urgency={this.state.selectedSite.urgency}
-                      cost={this.state.selectedSite.cost}
-                    />
-                  </Popup>
+                ?
+                  <MarkerPopup
+                    lat={this.state.selectedSite.coordinates._latitude}
+                    lon={this.state.selectedSite.coordinates._longitude}
+                    title={this.state.selectedSite.address}
+                    image={this.state.selectedSite.image}
+                    urgency={this.state.selectedSite.urgency}
+                    cost={this.state.selectedSite.cost}
+                    setSiteFunc={() => this.setState({ selectedSite: null })}
+                  />
                 : null
             }
           </MapContainer>
         </div>
+        
+        <Transition visible={this.state.budgetModalOpen} animation='scale' duration={400} unmountOnHide>
+          <Modal
+            closeIcon
+            open
+            onClose={this.closeBudgetModal}
+          >
+            <Modal.Header>Optimized Repair Plan</Modal.Header>
+            <Modal.Content>
+              <Modal.Description>
+                <MyTable data={this.state.optimizedPlan} />
+              </Modal.Description>
+            </Modal.Content>
+          </Modal>
+        </Transition>
 
-        <Modal
-          closeIcon
-          open={this.state.budgetModalOpen}
-          onClose={this.closeBudgetModal}
-        >
-          <Modal.Header>Optimized Repair Plan</Modal.Header>
-          <Modal.Content>
-            <Modal.Description>
-              <MyTable data={this.state.optimizedPlan} />
-            </Modal.Description>
-          </Modal.Content>
-        </Modal>
+        <Toasts toasts={this.state.toasts.list} />
       </div>
     );
   }
