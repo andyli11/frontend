@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Image } from 'semantic-ui-react';
+import { Modal, Image, Statistic } from 'semantic-ui-react';
 
 class ImageModal extends React.Component {
 
@@ -32,12 +32,12 @@ class ImageModal extends React.Component {
         onClose={() => this.setState({ open: false })}
       >
         <Modal.Header>{this.props.title}</Modal.Header>
-        <Modal.Content image>
-        <Image size='medium' src={`https://reconstruct-backend.herokuapp.com/uploads/${this.props.image}`} wrapped />
-          <Modal.Description>
-            <strong>Urgency Score:</strong> {this.props.urgency}
-
-            <strong>Estimated Cost:</strong> ${this.props.cost}
+        <Modal.Content style={{ display: 'flex', alignItems: 'center' }}>
+          <img style={{width: '50%', maxHeight: '60vh', objectFit: 'cover'}} size='medium' src={`https://reconstruct-backend.herokuapp.com/uploads/${this.props.image}`} />
+          <Modal.Description style={{ width: '50%', textAlign: 'center' }}>
+            <Statistic label='Urgency Score' value={this.props.urgency.toLocaleString()} />
+            <br />
+            <Statistic label='Estimated Cost' value={'$' + this.props.cost.toLocaleString()} />
           </Modal.Description>
         </Modal.Content>
       </Modal>

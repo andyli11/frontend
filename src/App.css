@@ -10,9 +10,8 @@
 }
 
 .titleImg {
-  height: 4.5vw;
-  max-height: 10vh;
-  max-width: 90%;
+  max-height: 50px;
+  max-width: 80%;
   margin-bottom: 50px;
   animation: fade-in 1.5s;
 }
@@ -111,4 +110,7 @@ form button {
 .site-table-row:hover {
   background-color: #f1f1f1;
   cursor: pointer;
+}
+.site-table-row.selected, .site-table-row.selected:hover {
+  background-color: #fffcd6;
 }

@@ -1,8 +1,5 @@
 import React from 'react';
-import { Table, Menu, Icon, Pagination } from 'semantic-ui-react';
-import ImageModal from './ImageModal';
-
-const ELEMENTS_PER_PAGE = 5;
+import { Table, Pagination } from 'semantic-ui-react';
 
 class MyTable extends React.Component {
   constructor(props){
@@ -12,7 +9,7 @@ class MyTable extends React.Component {
       data: this.props.data,
       column: 'N/A',    // Set in componentDidMount.
       direction: 'N/A', // Set in componentDidMount.
-      numPages: Math.ceil(this.props.data.length / ELEMENTS_PER_PAGE),
+      numPages: Math.ceil(this.props.data.length / 5),
       page: 1
     }
   }
@@ -56,14 +53,27 @@ class MyTable extends React.Component {
     if (this.props.data !== prevProps.data) {
       this.setState({
         data: this.props.data,
-        numPages: Math.ceil(this.props.data.length / ELEMENTS_PER_PAGE),
+        numPages: Math.ceil(this.props.data.length / 5),
         page: 1
+      });
+    }
+    if (this.props.selectedSiteID && this.props.selectedSiteID !== prevProps.selectedSiteID){
+      let newPage = Math.floor(this.findIndex(this.props.selectedSiteID) / 5) + 1;
+      this.setState({
+        page: newPage,
+        selectedSiteID: this.props.selectedSiteID
       });
     }
   }
 
+  findIndex = (id) => {
+    for (let i = 0; i < this.state.data.length; i++){
+      if (this.state.data[i].id === id) return i;
+    }
+    return -1;
+  }
+
   render() {
-    let tablePadding = 8;
     return (
       <Table sortable celled fixed style={{height: '10px'}}>
         <Table.Header>
@@ -92,9 +102,13 @@ class MyTable extends React.Component {
           {
             this.state.data
             ? this.state.data
-                .slice((this.state.page - 1) * ELEMENTS_PER_PAGE, this.state.page * ELEMENTS_PER_PAGE)
+                .slice((this.state.page - 1) * 5, this.state.page * 5)
                 .map(site => (
-                  <Table.Row className='site-table-row' key={site.id} onClick={this.props.selectSiteFunc ? () => this.props.selectSiteFunc(site) : null}>
+                  <Table.Row
+                    className={this.props.selectedSiteID && this.props.selectedSiteID === site.id ? 'selected site-table-row' : 'site-table-row'}
+                    key={site.id}
+                    onClick={this.props.selectSiteFunc ? () => this.props.selectSiteFunc(site) : null}
+                  >
                     <Table.Cell>
                       {site.address}
                     </Table.Cell>
@@ -105,13 +119,13 @@ class MyTable extends React.Component {
             : 'Whoops! There\'s nothing to show here.'
           }
         </Table.Body>
-        <Table.Footer>
+        <Table.Footer style={{ display: this.state.numPages > 1 ? 'table-footer-group' : 'none' }}>
           <Table.Row>
             <Table.HeaderCell colSpan='3' style={{ textAlign: 'center' }}>
               <Pagination
                 totalPages={this.state.numPages}
                 activePage={this.state.page}
-                onPageChange={(e, { activePage }) => { this.setState({ page: activePage }) }}
+                onPageChange={(e, { activePage }) => { this.setState({ page: activePage, selectedSiteID: null }) }}
               />
             </Table.HeaderCell>
           </Table.Row>

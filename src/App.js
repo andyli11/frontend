@@ -29,7 +29,9 @@ class App extends React.Component {
       budget: null,
       budgetModalOpen: false,
       optimizedPlan: [],
-      selectedSite: null
+      selectedSite: null,
+      pageForce: 0,
+      pageForceFlag: 0
     }
   }
 
@@ -86,13 +88,15 @@ class App extends React.Component {
   render() {
     let markers = null;
     if (this.state.data && this.state.data.length > 0){
-      markers = this.state.data.map(item => {
+      markers = this.state.data.map((item, i) => {
         return(
           <Marker
             key={item.id}
             position={[item.coordinates._latitude, item.coordinates._longitude]}
             icon={markerIcon}
-            onClick={() => console.log('ellso')}
+            eventHandlers={{
+              click: (e) => this.selectSite(item),
+            }}
           />
         )
       });
@@ -120,7 +124,11 @@ class App extends React.Component {
             />
           </div>
 
-          <MyTable data={this.state.data} selectSiteFunc={this.selectSite} />
+          <MyTable
+            data={this.state.data}
+            selectedSiteID={this.state.selectedSite ? this.state.selectedSite.id : null}
+            selectSiteFunc={this.selectSite}
+          />
 
           <form onSubmit={this.handleBudgetSubmit}>
             <Input iconPosition='left' placeholder='Budget'>
