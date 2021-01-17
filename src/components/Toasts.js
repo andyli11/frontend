@@ -11,7 +11,7 @@ class Toasts extends React.Component {
         {
           this.props.toasts.map(t => {
             return (
-              <ToastAlert type={t.type} title={t.title} content={t.content} />
+              <ToastAlert key={t.id} type={t.type} title={t.title} content={t.content} />
             );
           })
         }

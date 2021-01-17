@@ -1,10 +1,11 @@
 import React from 'react';
 import { Icon as LIcon } from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import axios from 'axios';
-import { Dropdown, Input, Icon, Button, Modal, Header, Transition } from 'semantic-ui-react';
-import MyTable from './components/table';
+import { Dropdown, Input, Icon, Button, Header } from 'semantic-ui-react';
+import MyTable from './components/Table';
 import MarkerPopup from './components/MarkerPopup';
+import RepairPopup from './components/RepairPopup';
 
 import titleImg from './img/reconstruct.png';
 import myIcon from './img/caution_icon.png';
@@ -13,7 +14,6 @@ import './App.css';
 import 'leaflet/dist/leaflet.css';
 
 import 'semantic-ui-css/semantic.min.css';
-import ImageModal from './components/ImageModal';
 import Toasts from './components/Toasts';
 
 const markerIcon = new LIcon({
@@ -28,8 +28,9 @@ class App extends React.Component {
     this.state = {
       mapOpen: true,
       data: [],
-      budget: null,
+      budget: '',
       budgetModalOpen: false,
+      loading: false,
       optimizedPlan: [],
       selectedSite: null,
       toasts: {
@@ -94,26 +95,35 @@ class App extends React.Component {
   handleBudgetSubmit = ev => {
     ev.preventDefault();
 
-    if (this.state.budget && this.state.budget >= 0){
+    if (this.state.budget && this.state.budget > 0){
+      this.setState({ loading: true });
       axios.get('https://reconstruct-backend.herokuapp.com/site/optimize?budget=' + this.state.budget)
         .then(result => {
-          if (result.data.result && result.data.result.length !== 0){
-            this.setState({
-              optimizedPlan: result.data.result[0].list,
-              budgetModalOpen: true
-            });
-          }
-          else {
-            console.log('oh no.')
-            this.newToast('Whoops!', 'No optimization could be found for this budget.', 'warning');
-          }
+          setTimeout(() => {
+            if (result.data.result && result.data.result.length !== 0){
+              this.setState({
+                loading: false,
+                optimizedPlan: result.data.result[0].list,
+                budgetModalOpen: true
+              });
+            }
+            else {
+              console.log('oh no.')
+              this.setState({ loading: false });
+              this.newToast('Whoops!', 'No optimization could be found for this budget.', 'warning');
+            }
+          }, 800);
         })
         .catch(err => {
-          console.log('Error fetching optimization', err)
-          this.newToast('Error', 'There was a problem getting the optimization.', 'danger');
+          setTimeout(() => {
+            console.log('Error fetching optimization', err)
+            this.setState({ loading: false });
+            this.newToast('Error', 'There was a problem getting the optimization.', 'danger');
+          }, 800);
         });
     }
     else {
+      this.setState({ loading: false });
       this.newToast(null, 'Please enter a positive number for the budget.', 'warning');
     }
   }
@@ -147,6 +157,7 @@ class App extends React.Component {
         )
       });
     }
+
     return (
       <div className='App'>
         <div className='data panel'>
@@ -230,21 +241,13 @@ class App extends React.Component {
             }
           </MapContainer>
         </div>
-        
-        <Transition visible={this.state.budgetModalOpen} animation='scale' duration={400} unmountOnHide>
-          <Modal
-            closeIcon
-            open
-            onClose={this.closeBudgetModal}
-          >
-            <Modal.Header>Optimized Repair Plan</Modal.Header>
-            <Modal.Content>
-              <Modal.Description>
-                <MyTable data={this.state.optimizedPlan} />
-              </Modal.Description>
-            </Modal.Content>
-          </Modal>
-        </Transition>
+
+        <RepairPopup
+          loading={this.state.loading}
+          open={this.state.budgetModalOpen}
+          onClose={this.closeBudgetModal}
+          data={this.state.optimizedPlan}
+        />
 
         <Toasts toasts={this.state.toasts.list} />
       </div>

@@ -1,0 +1,11 @@
+.site-table-row:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+.site-table-row.selected, .site-table-row.selected:hover {
+  background-color: #fffcd6;
+}
+
+.spinnerWrapper {
+  text-align: center;
+}

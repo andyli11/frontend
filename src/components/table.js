@@ -1,5 +1,7 @@
 import React from 'react';
-import { Table, Pagination } from 'semantic-ui-react';
+import { Table, Pagination, Icon } from 'semantic-ui-react';
+
+import './Table.css';
 
 class MyTable extends React.Component {
   constructor(props){
