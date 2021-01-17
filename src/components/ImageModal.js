@@ -11,6 +11,17 @@ class ImageModal extends React.Component {
   }
 
   render() {
+    let triggerButtonStyle = {
+      background: 'none',
+      border: 'none',
+      outline: 'none',
+      font: 'inherit',
+      color: '#2080d0',
+      cursor: 'pointer',
+      padding: 0,
+      margin: 0,
+      textAlign: 'left'
+    };
 
     return (
       <Modal
@@ -18,7 +29,7 @@ class ImageModal extends React.Component {
         closeIcon
         size='tiny'
         open={this.state.open}
-        trigger={<button style={{ background: 'none', border: 'none', outline: 'none', font: 'inherit', color: '#2080d0', cursor: 'pointer', padding: 0, margin: 0 }}>{this.props.address}</button>}
+        trigger={<button style={triggerButtonStyle}>{this.props.address}</button>}
         onOpen={() => this.setState({ open: true })}
         onClose={() => this.setState({ open: false })}
       >

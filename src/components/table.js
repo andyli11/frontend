@@ -1,16 +1,19 @@
 import React from 'react';
-import { Table, Menu, Icon } from 'semantic-ui-react';
+import { Table, Menu, Icon, Pagination } from 'semantic-ui-react';
 import ImageModal from './ImageModal';
+
+const ELEMENTS_PER_PAGE = 5;
 
 class MyTable extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-      propsData: this.props.data,
       data: this.props.data,
       column: 'N/A',    // Set in componentDidMount.
-      direction: 'N/A'  // Set in componentDidMount.
+      direction: 'N/A', // Set in componentDidMount.
+      numPages: Math.ceil(this.props.data.length / ELEMENTS_PER_PAGE),
+      page: 1
     }
   }
 
@@ -49,11 +52,14 @@ class MyTable extends React.Component {
     this.sortTable('address');
   }
 
-  componentDidUpdate = () => {
-    if (this.props.data !== this.state.propsData){
+  componentDidUpdate = (prevProps, prevState) => {
+
+    console.log('this.state.data:', this.state.data)
+    if (this.props.data !== prevProps.data) {
       this.setState({
-        propsData: this.props.data,
-        data: this.props.data
+        data: this.props.data,
+        numPages: Math.ceil(this.props.data.length / ELEMENTS_PER_PAGE),
+        page: 1
       });
     }
   }
@@ -87,33 +93,28 @@ class MyTable extends React.Component {
         <Table.Body>
           {
             this.state.data
-            ? this.state.data.map(({ address, urgency, cost, image }) => (
-              <Table.Row key={address}>
-                <Table.Cell style={{padding: tablePadding}}>
-                  <ImageModal address={address} image={image} />
-                </Table.Cell>
-                <Table.Cell style={{padding: tablePadding}}>{urgency}</Table.Cell>
-                <Table.Cell style={{padding: tablePadding}}>{cost}</Table.Cell>
-              </Table.Row>
-            ))
+            ? this.state.data
+                .slice((this.state.page - 1) * ELEMENTS_PER_PAGE, this.state.page * ELEMENTS_PER_PAGE)
+                .map(({ id, address, urgency, cost, image }) => (
+                  <Table.Row key={id}>
+                    <Table.Cell style={{padding: tablePadding}}>
+                      <ImageModal address={address} image={image} />
+                    </Table.Cell>
+                    <Table.Cell style={{padding: tablePadding}}>{urgency}</Table.Cell>
+                    <Table.Cell style={{padding: tablePadding}}>{cost}</Table.Cell>
+                  </Table.Row>
+                ))
             : 'Whoops! There\'s nothing to show here.'
           }
         </Table.Body>
         <Table.Footer>
           <Table.Row>
-            <Table.HeaderCell colSpan='3'>
-              <Menu floated='right' pagination>
-                <Menu.Item as='a' icon>
-                  <Icon name='chevron left' />
-                </Menu.Item>
-                <Menu.Item as='a'>1</Menu.Item>
-                <Menu.Item as='a'>2</Menu.Item>
-                <Menu.Item as='a'>3</Menu.Item>
-                <Menu.Item as='a'>4</Menu.Item>
-                <Menu.Item as='a' icon>
-                  <Icon name='chevron right' />
-                </Menu.Item>
-              </Menu>
+            <Table.HeaderCell colSpan='3' style={{ textAlign: 'center' }}>
+              <Pagination
+                totalPages={this.state.numPages}
+                activePage={this.state.page}
+                onPageChange={(e, { activePage }) => { this.setState({ page: activePage }) }}
+              />
             </Table.HeaderCell>
           </Table.Row>
         </Table.Footer>
